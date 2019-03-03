@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using SlimDX.DirectInput;
 using static RustTest.Win32;
 using RustTest.Properties;
+using SlimDX.Direct3D11;
 
 namespace RustTest
 {
@@ -17,7 +18,7 @@ namespace RustTest
     {
 
         const double sensitivity = 0.5;
-        const int refreshRate = 60;
+        const int refreshRate = 1;
 
         public static void Main(string[] args)
         {
@@ -59,10 +60,7 @@ namespace RustTest
                         break;
                 }
             }
-
-
-
-
+            // Startup Complete
 
 
             Joystick ActiveJoystick = new Joystick(directInput, directInputList[i].InstanceGuid);
@@ -92,17 +90,44 @@ namespace RustTest
             };
 
             INPUT[] MouseInputs = new INPUT[1];
+            InputData KeyboardInput = new InputData();
 
-            string keyDown = null;
+            // Init Buttons
+            
+            int buttonCount = ActiveJoystick.Capabilities.ButtonCount;
+            List<JoystickButton> joystickButtons = new List<JoystickButton>();
+            int o = 0;
+            for (o = 0; i < buttonCount; i++)
+            {
+                joystickButtons.Add(new JoystickButton()
+                {
+                    buttonName = "Button" + i,
+                    buttonState = false
+                });
+            }
+
+            bool[] buttonState = new bool[o];
 
             while (true)
             {
-            loop:
+                loop:
 
                 Thread.Sleep(100 / refreshRate);
                 ActiveJoystickState = ActiveJoystick.GetCurrentState();
+                buttonState = ActiveJoystickState.GetButtons();
 
-                Console.WriteLine(keyDown);
+                int e = 0;
+                foreach (JoystickButton button in joystickButtons)
+                {
+                    button.buttonState = buttonState[e];
+                    if (buttonState[e])
+                    {
+                        Console.WriteLine(button.buttonName + "is true");
+                    }
+                    e++;
+                }
+
+                
                 if (ActiveJoystick.Poll().IsFailure || ActiveJoystick.GetCurrentState(ref ActiveJoystickState).IsFailure)
                 {
                     Console.WriteLine("Polling Failed");
@@ -110,56 +135,39 @@ namespace RustTest
                 }
 
                 double factor = .01;
-
-
-
                 MouseInputs[0].U.mi.dx = (int)((ActiveJoystickState.X - defaultDeviceState[0]) * sensitivity * factor) * (Settings.Default.InvertX ? -1 : 1);
                 MouseInputs[0].U.mi.dy = (int)((ActiveJoystickState.Y - defaultDeviceState[1]) * sensitivity * factor) * (Settings.Default.InvertX ? -1 : 1);
                 MouseInputs[0].type = 0;
                 MouseInputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE;
                 SendInput(1, MouseInputs, INPUT.Size);
 
+                
 
-
-                KeyInputs[0].type = 1;
-
-
-                if ((ActiveJoystick.GetCurrentState().RotationZ < 100 && ActiveJoystick.GetCurrentState().RotationZ > -100) && keyDown != null)// (KeyInputs[0].U.ki.dwFlags == KEYEVENTF.SCANCODE)
+                if ((ActiveJoystick.GetCurrentState().RotationZ < 100 && ActiveJoystick.GetCurrentState().RotationZ > -100) && KeyboardInput.KEYEVENTF != KEYEVENTF.KEYUP)
                 {
-
-                    KeyInputs[0].U.ki.dwFlags = KEYEVENTF.KEYUP;
-                    KeyInputs[0].U.ki.wScan = 0;
-                    KeyInputs[0].U.ki.
-                    SendInput(1, KeyInputs, INPUT.Size);
-                    keyDown = null;
-                    goto loop;
+                    KeyboardInput.KEYEVENTF = KEYEVENTF.KEYUP;
                 }
 
-
-                if (KeyInputs[0].U.ki.dwFlags == KEYEVENTF.SCANCODE && keyDown != null) // oh look, you're holding the key!
-                    goto loop;
-
-                if ((ActiveJoystick.GetCurrentState().RotationZ > defaultDeviceState[2] + 100) && keyDown != "D") // (KeyInputs[0].U.ki.wScan != ScanCodeShort.KEY_D)
+                if ((ActiveJoystick.GetCurrentState().RotationZ > defaultDeviceState[2] + 100) && KeyboardInput.ScanCodeShort != ScanCodeShort.KEY_D)
                 {
-                    KeyInputs[0].U.ki.dwFlags = KEYEVENTF.SCANCODE;
-                    KeyInputs[0].U.ki.wScan = ScanCodeShort.KEY_D;
-                    keyDown = "D";
+                    KeyboardInput.KEYEVENTF = 0;
+                    KeyboardInput.ScanCodeShort = ScanCodeShort.KEY_D;
                 }
 
-                if ((ActiveJoystick.GetCurrentState().RotationZ < defaultDeviceState[2] - 100) && keyDown != "A") // (KeyInputs[0].U.ki.wScan != ScanCodeShort.KEY_A)
+                if ((ActiveJoystick.GetCurrentState().RotationZ < defaultDeviceState[2] - 100) && KeyboardInput.ScanCodeShort != ScanCodeShort.KEY_A)
                 {
-                    KeyInputs[0].U.ki.dwFlags = KEYEVENTF.SCANCODE;
-                    KeyInputs[0].U.ki.wScan = ScanCodeShort.KEY_A;
-                    keyDown = "A";
+                    KeyboardInput.KEYEVENTF = 0;
+                    KeyboardInput.ScanCodeShort = ScanCodeShort.KEY_A;
                 }
 
-                SendInput(1, KeyInputs, INPUT.Size);
+                SendInput(1, GetKeyInput(KeyboardInput.KEYEVENTF, KeyboardInput.ScanCodeShort), INPUT.Size);
+
             }
         }
 
         private static void HandleSettings()
         {
-        switchStart:
+            switchStart:
             Console.WriteLine("Invert X Axis: " + Settings.Default.InvertX);
             Console.WriteLine("Invert Y Axis: " + Settings.Default.InvertY);
 
@@ -176,25 +184,28 @@ namespace RustTest
             }
         }
 
-        private static void SendKey(VirtualKeyShort keyShort)
+        private static INPUT[] GetKeyInput(KEYEVENTF keyEvent, ScanCodeShort scanCode = 0)
         {
-            INPUT KeyInput = new INPUT
-            {
-                type = 1
-            };
-            KeyInput.U.ki = new KEYBDINPUT
-            {
-                Vk = (ushort)keyShort,
-                Scan = 0,
-                Flags = 2,
-                Time = 0,
-                ExtraInfo = IntPtr.Zero
-            };
+            INPUT[] KeyInput = new INPUT[1];
+            KeyInput[0].type = 1;
 
-            INPUT[] inputs = new INPUT[] {KeyInput};
-            SendInput(1, inputs, Marshal.SizeOf(typeof(INPUT)));
+            KeyInput[0].U.ki.wVk = 0;
+            KeyInput[0].U.ki.dwFlags = keyEvent;
+            KeyInput[0].U.ki.wScan = scanCode;
+
+            return KeyInput;
         }
     }
 
+    public class InputData
+    {
+        public ScanCodeShort ScanCodeShort { get; set; }
+        public KEYEVENTF KEYEVENTF { get; set; }
+    }
 
+    public class JoystickButton
+    {
+        public string buttonName { get; set; }
+        public bool buttonState { get; set; }
+    }
 }

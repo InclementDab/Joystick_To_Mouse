@@ -51,13 +51,13 @@ namespace RustTest
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct KEYBDINPUT
+        public struct KEYBDINPUT
         {
-            public ushort Vk;
-            public ushort Scan;
-            public uint Flags;
-            public uint Time;
-            public IntPtr ExtraInfo;
+            internal VirtualKeyShort wVk;
+            internal ScanCodeShort wScan;
+            internal KEYEVENTF dwFlags;
+            internal int time;
+            internal UIntPtr dwExtraInfo;
         }
 
         [Flags]
