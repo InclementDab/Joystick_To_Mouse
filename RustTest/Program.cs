@@ -18,7 +18,8 @@ namespace RustTest
     {
 
         const double sensitivity = 0.5;
-        const int refreshRate = 1;
+        const int refreshRate = 60;
+        const double factor = .01;
 
         public static void Main(string[] args)
         {
@@ -114,34 +115,51 @@ namespace RustTest
 
                 Thread.Sleep(100 / refreshRate);
                 ActiveJoystickState = ActiveJoystick.GetCurrentState();
-                buttonState = ActiveJoystickState.GetButtons();
 
+                buttonState = ActiveJoystickState.GetButtons();
+                // poll buttons
                 int e = 0;
                 foreach (JoystickButton button in joystickButtons)
                 {
                     button.buttonState = buttonState[e];
-                    if (buttonState[e])
-                    {
-                        Console.WriteLine(button.buttonName + "is true");
-                    }
                     e++;
                 }
 
-                
+                if (joystickButtons[0].buttonState)
+                {
+                    if (MouseInputs[0].U.mi.dwFlags != MOUSEEVENTF.LEFTDOWN)
+                    {
+                        MouseInputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE | MOUSEEVENTF.LEFTDOWN;
+                    }
+                    else
+                    {
+                        MouseInputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE;
+                    }
+                }
+                else
+                {
+                    if (MouseInputs[0].U.mi.dwFlags > MOUSEEVENTF.LEFTDOWN)
+                    {
+                        MouseInputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE | MOUSEEVENTF.LEFTUP;
+                    }
+                    else
+                    {
+                        MouseInputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE;
+                    }
+                }
+
                 if (ActiveJoystick.Poll().IsFailure || ActiveJoystick.GetCurrentState(ref ActiveJoystickState).IsFailure)
                 {
                     Console.WriteLine("Polling Failed");
                     goto loop;
                 }
 
-                double factor = .01;
                 MouseInputs[0].U.mi.dx = (int)((ActiveJoystickState.X - defaultDeviceState[0]) * sensitivity * factor) * (Settings.Default.InvertX ? -1 : 1);
                 MouseInputs[0].U.mi.dy = (int)((ActiveJoystickState.Y - defaultDeviceState[1]) * sensitivity * factor) * (Settings.Default.InvertX ? -1 : 1);
                 MouseInputs[0].type = 0;
-                MouseInputs[0].U.mi.dwFlags = MOUSEEVENTF.MOVE;
                 SendInput(1, MouseInputs, INPUT.Size);
 
-                
+
 
                 if ((ActiveJoystick.GetCurrentState().RotationZ < 100 && ActiveJoystick.GetCurrentState().RotationZ > -100) && KeyboardInput.KEYEVENTF != KEYEVENTF.KEYUP)
                 {
@@ -150,6 +168,7 @@ namespace RustTest
 
                 if ((ActiveJoystick.GetCurrentState().RotationZ > defaultDeviceState[2] + 100) && KeyboardInput.ScanCodeShort != ScanCodeShort.KEY_D)
                 {
+
                     KeyboardInput.KEYEVENTF = 0;
                     KeyboardInput.ScanCodeShort = ScanCodeShort.KEY_D;
                 }
@@ -159,10 +178,27 @@ namespace RustTest
                     KeyboardInput.KEYEVENTF = 0;
                     KeyboardInput.ScanCodeShort = ScanCodeShort.KEY_A;
                 }
-
                 SendInput(1, GetKeyInput(KeyboardInput.KEYEVENTF, KeyboardInput.ScanCodeShort), INPUT.Size);
 
+
+
+
+                
+
             }
+        }
+
+
+        private static INPUT[] GetKeyInput(KEYEVENTF keyEvent, ScanCodeShort scanCode = 0)
+        {
+            INPUT[] KeyInput = new INPUT[1];
+            KeyInput[0].type = 1;
+
+            KeyInput[0].U.ki.wVk = 0;
+            KeyInput[0].U.ki.dwFlags = keyEvent;
+            KeyInput[0].U.ki.wScan = scanCode;
+
+            return KeyInput;
         }
 
         private static void HandleSettings()
@@ -182,18 +218,6 @@ namespace RustTest
                 default:
                     return;
             }
-        }
-
-        private static INPUT[] GetKeyInput(KEYEVENTF keyEvent, ScanCodeShort scanCode = 0)
-        {
-            INPUT[] KeyInput = new INPUT[1];
-            KeyInput[0].type = 1;
-
-            KeyInput[0].U.ki.wVk = 0;
-            KeyInput[0].U.ki.dwFlags = keyEvent;
-            KeyInput[0].U.ki.wScan = scanCode;
-
-            return KeyInput;
         }
     }
 
