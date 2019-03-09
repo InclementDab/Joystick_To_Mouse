@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="Joy2Mouse.MainControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Joy2Mouse"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="600"
+             Background="White">
+    <Grid>
+        <StackPanel Orientation="Vertical" Margin="10">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Bind Up Movement" Margin="5"/>
+                <Button Content="Unbound"/>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

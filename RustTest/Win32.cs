@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RustTest
+namespace Joy2Mouse
 {
     public class Win32
     {

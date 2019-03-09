@@ -1,0 +1,25 @@
+﻿<Window x:Class="Controller2Mouse.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Controller2Mouse"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+
+        <StackPanel Orientation="Vertical" Margin="10" Grid.Column="1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Click to bind" Margin="5"/>
+                <Button Content="Bind" Width="75"/>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Margin="10">
+            <ListView x:Name="MainListView" Width="250" Height="250" ItemsSource="{Binding Path=DeviceInstance.ProductName}">
+                
+            </ListView>
+        </StackPanel>
+
+    </Grid>
+</Window>
