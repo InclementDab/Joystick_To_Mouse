@@ -4,22 +4,44 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Controller2Mouse"
+        xmlns:p="clr-namespace:Controller2Mouse.Properties"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Controller2PC" Height="450" Width="800"
+        LayoutUpdated="MainWindow_OnLayoutUpdated">
 
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="100"/>
+        </Style>
+        <Style TargetType="ListViewItem">
+            <Setter Property="Content" Value="{Binding ProductName}"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
         <StackPanel Orientation="Vertical" Margin="10" Grid.Column="1">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock Text="Absolute Positioning" FontSize="12" Margin="2"/>
+                <CheckBox VerticalContentAlignment="Center" Margin="2" IsChecked="{Binding Source={x:Static p:Settings.Default}, Path=absPos, Mode=TwoWay}"/>
+            </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Click to bind" Margin="5"/>
-                <Button Content="Bind" Width="75"/>
+                <Button Content="Bind"/>
             </StackPanel>
         </StackPanel>
 
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Margin="10">
-            <ListView x:Name="MainListView" Width="250" Height="250" ItemsSource="{Binding Path=DeviceInstance.ProductName}">
-                
-            </ListView>
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left">
+            <local:Log/>
         </StackPanel>
 
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Margin="10">
+            <ListView x:Name="MainListView" Width="250" Height="250" Margin="0 0 0 7"/>
+            <StackPanel Orientation="Horizontal" Margin="5" HorizontalAlignment="Center">
+                <Button x:Name="SelectButton" Margin="10" IsEnabled="False" Content="Select Device" Click="Select_OnClick"/>
+                <Button x:Name="RefreshButton" Margin="10" IsEnabled="True" Content="Refresh" Click="Refresh_OnClick"/>
+            </StackPanel>
+            <Button x:Name="StartButton" IsEnabled="True" Width="125" Height="50" Content="Start" Margin="0 15 0 0" Click="Start_OnClick"/>
+        </StackPanel>
     </Grid>
 </Window>

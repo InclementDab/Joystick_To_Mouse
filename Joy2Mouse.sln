@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Joy2Mouse", "RustTest\Joy2M
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Controller2Mouse", "Controller2Mouse\Controller2Mouse.csproj", "{4E257691-2C2E-41DF-8FEB-1D06210DA52B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OBS-Mouse-Follower", "OBS-Mouse-Follower\OBS-Mouse-Follower.csproj", "{4F9E147D-1F1E-4F2E-9231-AF75D2ADC093}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4E257691-2C2E-41DF-8FEB-1D06210DA52B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E257691-2C2E-41DF-8FEB-1D06210DA52B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E257691-2C2E-41DF-8FEB-1D06210DA52B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F9E147D-1F1E-4F2E-9231-AF75D2ADC093}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F9E147D-1F1E-4F2E-9231-AF75D2ADC093}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F9E147D-1F1E-4F2E-9231-AF75D2ADC093}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F9E147D-1F1E-4F2E-9231-AF75D2ADC093}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

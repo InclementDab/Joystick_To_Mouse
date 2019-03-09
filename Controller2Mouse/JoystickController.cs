@@ -8,27 +8,44 @@ using SlimDX.DirectInput;
 
 namespace Controller2Mouse
 {
-    class JoystickController
+    public class JoystickController
     {
         public ObservableCollection<DeviceInstance> ControllerList
         {
-            get { return EnumerateDevices() as ObservableCollection<DeviceInstance>; }
+            get { return EnumerateDevices(); }
         }
+
+        private DirectInput DirectInput;
 
         public JoystickController()
         {
-            
+            DirectInput = new DirectInput();
         }
 
         private ObservableCollection<DeviceInstance> EnumerateDevices()
         {
-            ObservableCollection<DeviceInstance> Devices = new ObservableCollection<DeviceInstance>();
-            DirectInput Input = new DirectInput();
+            Log.Add("Enumerating Devices...");
 
-            IList<DeviceInstance> List = new DirectInput().GetDevices(DeviceClass.GameController, DeviceEnumerationFlags.AttachedOnly);
-            foreach (DeviceInstance device in List)
+            var Devices = new ObservableCollection<DeviceInstance>();
+            foreach (DeviceInstance device in DirectInput.GetDevices(DeviceClass.GameController, DeviceEnumerationFlags.AttachedOnly))
                 Devices.Add(device);
+
+            switch (Devices.Count())
+            {
+                case 0:
+                    Log.Add("No Devices Found");
+                    break;
+                case 1:
+                    Log.Add(Devices.Count() + " Device Found");
+                    break;
+                default:
+                    Log.Add(Devices.Count() + " Devices Found");
+                    break;
+            }
+
             return Devices;
         }
+
+        public Joystick AcquireJoystick(DeviceInstance _DeviceInstance) => new Joystick(DirectInput, _DeviceInstance.InstanceGuid);
     }
 }

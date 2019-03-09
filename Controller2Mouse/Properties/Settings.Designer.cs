@@ -22,5 +22,17 @@ namespace Controller2Mouse.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool absPos {
+            get {
+                return ((bool)(this["absPos"]));
+            }
+            set {
+                this["absPos"] = value;
+            }
+        }
     }
 }
