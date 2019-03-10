@@ -5,5 +5,11 @@
     <Setting Name="absPos" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="SavedDirectInput" Type="SlimDX.DirectInput.DirectInput" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="baseSetting" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

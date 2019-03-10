@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -16,6 +17,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Controller2Mouse.Properties;
 using SlimDX.DirectInput;
+using System.Collections;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace Controller2Mouse
 {
@@ -35,8 +39,6 @@ namespace Controller2Mouse
 
         public MainWindow(JoystickController JoystickController)
         {
-            // AllocConsole();
-
             InitializeComponent();
             _JoystickController = JoystickController;
             MainListView.ItemsSource = _JoystickController.ControllerList.Select(x => x);
@@ -51,6 +53,11 @@ namespace Controller2Mouse
         {
             _ActiveJoystick = _JoystickController.AcquireJoystick(MainListView.SelectedItem as DeviceInstance);
             Log.Add("Selected " + _ActiveJoystick.Properties.ProductName);
+
+            _JoystickController.GetJoystickProperties(_ActiveJoystick);
+
+
+
         }
 
         private void MainWindow_OnLayoutUpdated(object sender, EventArgs e)
@@ -59,13 +66,39 @@ namespace Controller2Mouse
             Settings.Default.Save();
         }
 
+
+
         private void Start_OnClick(object sender, RoutedEventArgs e)
         {
+            if (_ActiveJoystick == null)
+            {
+                Log.Add("No Joystick Selected!");
+                return;
+            }
+
             _ActiveJoystick.Properties.AxisMode =
                 Settings.Default.absPos ? DeviceAxisMode.Absolute : DeviceAxisMode.Relative;
 
             Log.Add("Acquiring " + _ActiveJoystick.Properties.ProductName + "...");
             Log.Add(_ActiveJoystick.Acquire());
+
+        }
+
+        private void Bind_OnClick(object sender, RoutedEventArgs e)
+        {
+            BindButton button = new BindButton((Width / 2) + Left, (Height / 2) + Top, _ActiveJoystick);
+            button.ShowDialog();
+        }
+    }
+
+    sealed class JoystickSettings : ApplicationSettingsBase
+    {
+        [UserScopedSetting]
+        [SettingsSerializeAs(SettingsSerializeAs.Xml)]
+        public List<DeviceProperties> JoystickProperties
+        {
+            get { return (List<DeviceProperties>)this["JoystickProperties"]; }
+            set { this["JoystickProperties"] = value; }
         }
     }
 }

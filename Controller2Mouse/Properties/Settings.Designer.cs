@@ -34,5 +34,28 @@ namespace Controller2Mouse.Properties {
                 this["absPos"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::SlimDX.DirectInput.DirectInput SavedDirectInput {
+            get {
+                return ((global::SlimDX.DirectInput.DirectInput)(this["SavedDirectInput"]));
+            }
+            set {
+                this["SavedDirectInput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public byte baseSetting {
+            get {
+                return ((byte)(this["baseSetting"]));
+            }
+            set {
+                this["baseSetting"] = value;
+            }
+        }
     }
 }

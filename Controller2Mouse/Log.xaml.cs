@@ -20,8 +20,7 @@ namespace Controller2Mouse
         }
 
 
-        public static void Add(object message) 
-            => LogEntries.Add(new LogEntry
+        public static void Add(object message) => LogEntries.Add(new LogEntry
             {
                 DateTime = DateTime.Now,
                 Message = message

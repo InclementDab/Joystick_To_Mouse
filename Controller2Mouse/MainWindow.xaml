@@ -27,7 +27,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Click to bind" Margin="5"/>
-                <Button Content="Bind"/>
+                <Button Content="Bind" Click="Bind_OnClick"/>
             </StackPanel>
         </StackPanel>
 

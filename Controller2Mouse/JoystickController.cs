@@ -15,7 +15,7 @@ namespace Controller2Mouse
             get { return EnumerateDevices(); }
         }
 
-        private DirectInput DirectInput;
+        public DirectInput DirectInput;
 
         public JoystickController()
         {
@@ -47,5 +47,30 @@ namespace Controller2Mouse
         }
 
         public Joystick AcquireJoystick(DeviceInstance _DeviceInstance) => new Joystick(DirectInput, _DeviceInstance.InstanceGuid);
+
+        public void GetJoystickProperties(Joystick _ActiveJoystick)
+        {
+
+            List<JoystickButton> Buttons = new List<JoystickButton>();
+            var test = _ActiveJoystick.Capabilities;
+
+            List<JoystickButton> ButtonList = new List<JoystickButton>(test.ButtonCount);
+            
+            //Log.Add(test.ButtonCount);
+
+            //IList<DeviceObjectInstance> ListOfDevices = _ActiveJoystick.GetObjects();
+
+            ObservableCollection<DeviceObjectInstance> ObservableDevices = _ActiveJoystick.GetObjects() as ObservableCollection<DeviceObjectInstance>;
+
+            
+        }
+
+        
+    }
+
+    public class JoystickButton // Bind to eventhandler later
+    {
+        public string Name { get; set; }
+        public bool State { get; set; }
     }
 }
